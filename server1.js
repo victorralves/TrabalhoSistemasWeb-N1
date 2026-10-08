@@ -5,16 +5,16 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/public', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/public/cardapio.html', (req, res) => {
-    res.sendFile(__dirname + '/cardapio.html');
+app.get('/cardapio', (req, res) => {
+    res.sendFile(__dirname + '/public/cardapio.html');
 });
 
-app.get('/public/pedidos.html', (req, res) => {
-    res.sendFile(__dirname + '/pedidos.html');
+app.get('/pedidos', (req, res) => {
+    res.sendFile(__dirname + '/public/pedidos.html');
 });
-
+console.log("http://localhost:3000");
 app.listen(3000);
