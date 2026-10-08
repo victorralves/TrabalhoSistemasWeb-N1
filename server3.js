@@ -9,5 +9,17 @@ const estoque = [
     { CodProduto: 3, Estoque: 20 }
 ];
 
+app.get('/estoque', (req, res) => {
+    res.json(estoque);
+});
+
+app.post('/baixa', (req, res) => {
+
+});
+
+app.post('/reposicao', (req, res) => {
+    
+});
+
 console.log("http://localhost:3002");
 app.listen(3002);
