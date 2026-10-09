@@ -1,53 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cardapio</title>
-    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>Cardapio</h1>
+    <h1 style="text-align: center">Cardapio</h1>
 
-    <p>Nome do cliente:</p>
-    <input type="text" id="nomeCliente">
+    <p style="text-align: center">Nome do cliente:</p>
+    <input type="text" id="nomeCliente" style="display: block; margin: 0 auto;">
 
-    <h2>Produtos</h2>
+    <h2 style="text-align: center">Produtos</h2>
 
-    <div id="produtos">
-         <script>
-            async function fetchProdutos() {
-                try {
-                    var linkServer2 = ('http://localhost:3002/produtos?');
-                    if (!response.ok) {
-                        throw new Error('Erro ao obter os produtos');
+    <table style="margin: 0 auto; text-align: center;">
+        <thead>
+            <tr>
+                <th>Código do Produto |</th>
+                <th>Nome do Produto |</th>
+                <th>Preço do Produto |</th>
+                <th>Quantidade em Estoque |</th>
+            </tr>  
+       
+
+        <tbody id="tbody">
+            <script>
+                var produtosDoEstoque = {
+                    listaProdutos: [],
+
+                    getProdutos: function () {
+                        var produtos = localStorage.getItem('produtos');
+                        this.listaProdutos = produtos ? JSON.parse(produtos) : [];
+                        return this.listaProdutos;
+                    },
+                    setProdutos: function (produtos) {
+                        localStorage.setItem('produtos', JSON.stringify(produtos));
                     }
-                    var produtos = await response.json();
-                    var ordemID = document.getElementById('produtos').value;
-                    varordenarPor = document.getElementById('ordenarPor').value;
-                    linkServer2 += `ordemID=${ordemID}&ordenarPor=${ordenarPor}`;
+                }
+
+                function carregarProdutos() {
+                    var linkProdutos = 'http://localhost:3002/produtos';
+
+                    fetch(linkProdutos)
+                        .then(response => {
+                            if (response.ok) return response.json();
+                            throw new Error(`Falha na resposta do servidor (${response.status})`);
+                        })
+                        .then(produtos => {
+                            produtosDoEstoque.setProdutos(produtos);
+                            if (produtos == null || produtos.length === 0) {
+                                console.log('Nenhum produto encontrado.');
+                            }
+                            exibirProdutos();
+                        })
+                        .catch(error =>
+                            console.error('Erro ao carregar produtos:', error));
+                }
+
+                function exibirProdutos() {
+                    var produtos = produtosDoEstoque.getProdutos();
+                    var tbody = document.getElementById('tbody');
+                    tbody.innerHTML = '';
 
                     produtos.forEach(produto => {
-                        const produtoDiv = document.createElement('div');
-                        produtoDiv.innerHTML = `
-                            <input type="checkbox" id="${produto.id}" name="produto" value="${produto.nome}">
-                            <label for="${produto.id}">${produto.nome}</label>
-                        `;
-                        produtosDiv.appendChild(produtoDiv);
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = `
+                        <td>${produto.CodProduto}</td>
+                        <td>${produto.NomeProduto}</td>
+                        <td>${produto.PrecoProduto}</td>
+                        <td>${produto.Estoque}</td>
+                    `;
+                        tbody.appendChild(tr);
                     });
-                } catch (error) {
-                    console.error(error);
                 }
-            }
 
-            fetchProdutos();
-        </script>
+                carregarProdutos();
+            </script>
+        </tbody>
+    </table>
+
+    <div style="text-align: center">
+        <br></br>
+        <button type="submit">Enviar Pedido</button>
+        <br></br>
+        <a href="/" style="margin: 0 auto; align-items: center">Voltar para o inicio</a>
     </div>
-
-    <button type="submit">Enviar Pedido</button>
 
     <p id="mensagem"></p>
 
-    <a href="/">Voltar para o inicio</a>
+    
 </body>
+
 </html>

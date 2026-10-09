@@ -1,18 +1,36 @@
 //SERVIDOR API DE PEDIDOS
 
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
+listaEstoqueFront = [
+    {NomeProduto: "Sanduíche", PrecoProduto: 5},
+    {NomeProduto: "Refrigerante", PrecoProduto: 5},
+    {NomeProduto: "Pão de Mel", PrecoProduto: 8}
+];
+
 app.get('/produtos', async (req, res) => {
-    var estoque = await fetch('http://localhost:3002/estoque');
+    var estoque = await fetch('http://localhost:3003/estoque');
     if(estoque.status === 200){
-        produtos = await estoque.json();
+        produtosServer3 = await estoque.json();
+        var produtos = listaEstoqueFront.map((item, posicao) => {
+            return {
+                CodProduto: produtosServer3[posicao].CodProduto,
+                NomeProduto: item.NomeProduto,
+                PrecoProduto: item.PrecoProduto,
+                Estoque: produtosServer3[posicao].Estoque
+            };
+        })
         res.status(200).json(produtos);
     }
     else{
-        res.status(500).json({ message: 'Erro ao obter o estoque' });
+        let statusCode = estoque.status;
+        console.error(`Erro ao obter o estoque. Status code: ${statusCode}`);
     }
 });
 
