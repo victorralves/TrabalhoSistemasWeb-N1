@@ -15,8 +15,8 @@ listaPreco = [
 ];
 
 listaPedidos = [
-
-
+    {NumPedido: 1, NomeCliente: "João", TotalPedido: 10, Itens: [{CodProduto: 1, Qtd: 2}, {CodProduto: 2, Qtd: 1}]},
+    {NumPedido: 2, NomeCliente: "Maria", TotalPedido: 5, Itens: [{CodProduto: 2, Qtd: 1}]}
 ];
 
 app.get('/produtos', async (req, res) => {
