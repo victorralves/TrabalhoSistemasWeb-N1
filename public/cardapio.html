@@ -22,6 +22,7 @@
                 <th>Nome do Produto |</th>
                 <th>Preço do Produto |</th>
                 <th>Quantidade em Estoque |</th>
+                <th><strong>Quantidade Desejada</strong></th>
             </tr>  
        
 
@@ -71,6 +72,10 @@
                         <td>${produto.NomeProduto}</td>
                         <td>${produto.PrecoProduto}</td>
                         <td>${produto.Estoque}</td>
+                        <td>
+                            <label for="quantidade_${produto.CodProduto}">Quantidade:</label>
+                            <input type="number" name="quantidade_${produto.CodProduto}" min="0" max="${produto.Estoque}" required>
+                        </td>
                     `;
                         tbody.appendChild(tr);
                     });
@@ -80,6 +85,8 @@
             </script>
         </tbody>
     </table>
+             
+
 
     <div style="text-align: center">
         <br></br>
