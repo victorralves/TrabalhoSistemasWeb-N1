@@ -14,12 +14,42 @@ app.get('/estoque', (req, res) => {
 });
 
 app.post('/baixa', (req, res) => {
+    const itens = req.body;
+    let temEstoque = true;
 
+    for (let i = 0; i < itens.length; i++) {
+        let encontrado = false;
+
+        for (let j = 0; j < estoque.length; j++) {
+            if (itens[i].CodProduto == estoque[j].CodProduto) {
+                encontrado = true;
+                if (itens[i].Qtd > estoque[j].Estoque) {
+                    temEstoque = false;
+                }
+            }
+        }
+
+        if (encontrado == false) {
+            temEstoque = false;
+        }
+    }
+
+    if (temEstoque == false) {
+        return res.status(400).send('erro');
+    }
+
+    for (let i = 0; i < itens.length; i++) {
+        for (let j = 0; j < estoque.length; j++) {
+            if (itens[i].CodProduto == estoque[j].CodProduto) {
+                estoque[j].Estoque -= itens[i].Qtd;
+            }
+        }
+    }
+    res.send('ok');
 });
 
 app.post('/reposicao', (req, res) => {
     const itens = req.body;
-
     for (let i = 0; i < itens.length; i++) {
         for (let j = 0; j < estoque.length; j++) {
             if (itens[i].CodProduto == estoque[j].CodProduto) {
@@ -27,8 +57,7 @@ app.post('/reposicao', (req, res) => {
             }
         }
     }
-
-    res.send('Estoque atualizado');
+    res.send('ok');
 });
 
 console.log("http://localhost:3002");
