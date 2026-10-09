@@ -8,20 +8,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-listaEstoqueFront = [
-    {NomeProduto: "Sanduíche", PrecoProduto: 5},
-    {NomeProduto: "Refrigerante", PrecoProduto: 5},
-    {NomeProduto: "Pão de Mel", PrecoProduto: 8}
+listaPreco = [
+    {PrecoProduto: 5},
+    {PrecoProduto: 5},
+    {PrecoProduto: 8}
+];
+
+listaPedidos = [
+
+
 ];
 
 app.get('/produtos', async (req, res) => {
     var estoque = await fetch('http://localhost:3003/estoque');
     if(estoque.status === 200){
         produtosServer3 = await estoque.json();
-        var produtos = listaEstoqueFront.map((item, posicao) => {
+        var produtos = listaPreco.map((item, posicao) => {
             return {
                 CodProduto: produtosServer3[posicao].CodProduto,
-                NomeProduto: item.NomeProduto,
+                NomeProduto: produtosServer3[posicao].NomeProduto,
                 PrecoProduto: item.PrecoProduto,
                 Estoque: produtosServer3[posicao].Estoque
             };
