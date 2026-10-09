@@ -60,5 +60,5 @@ app.post('/reposicao', (req, res) => {
     res.send('ok');
 });
 
-console.log("http://localhost:3002");
-app.listen(3002);
+console.log("http://localhost:3003");
+app.listen(3003);

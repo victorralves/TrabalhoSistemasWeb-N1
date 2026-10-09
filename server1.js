@@ -16,5 +16,6 @@ app.get('/cardapio', (req, res) => {
 app.get('/pedidos', (req, res) => {
     res.sendFile(__dirname + '/public/pedidos.html');
 });
-console.log("http://localhost:3000");
-app.listen(3000);
+
+console.log("http://localhost:3001");
+app.listen(3001);

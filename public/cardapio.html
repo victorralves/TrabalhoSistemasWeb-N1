@@ -15,7 +15,33 @@
     <h2>Produtos</h2>
 
     <div id="produtos">
-        <!-- vai puxar do server 2 depois -->
+         <script>
+            async function fetchProdutos() {
+                try {
+                    var linkServer2 = ('http://localhost:3002/produtos?');
+                    if (!response.ok) {
+                        throw new Error('Erro ao obter os produtos');
+                    }
+                    var produtos = await response.json();
+                    var ordemID = document.getElementById('produtos').value;
+                    varordenarPor = document.getElementById('ordenarPor').value;
+                    linkServer2 += `ordemID=${ordemID}&ordenarPor=${ordenarPor}`;
+
+                    produtos.forEach(produto => {
+                        const produtoDiv = document.createElement('div');
+                        produtoDiv.innerHTML = `
+                            <input type="checkbox" id="${produto.id}" name="produto" value="${produto.nome}">
+                            <label for="${produto.id}">${produto.nome}</label>
+                        `;
+                        produtosDiv.appendChild(produtoDiv);
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            fetchProdutos();
+        </script>
     </div>
 
     <button type="submit">Enviar Pedido</button>
