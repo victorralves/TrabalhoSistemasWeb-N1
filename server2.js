@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 listaPreco = [
-    {PrecoProduto: 5},
+    {PrecoProduto: 5.5},
     {PrecoProduto: 5},
     {PrecoProduto: 8}
 ];

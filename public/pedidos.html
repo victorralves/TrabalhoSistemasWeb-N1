@@ -15,11 +15,11 @@
             <tr>
                 <th>Código do Pedido |</th>
                 <th>Nome do Cliente |</th>
-                <th>Total do Pedido |</th>
                 <th>Código do Produto |</th>
                 <th>Nome do Produto |</th>
+                <th><strong>Quantidade Pedida |</strong></th><br>
                 <th>Preço do Produto |</th>
-                <th><strong>Quantidade Pedida</strong></th><br>
+                <th>Total do Pedido (R$)</th>
             </tr>
         </thead>
 
@@ -68,11 +68,11 @@
                         tr.innerHTML = `
                         <td>${pedido.NumPedido}</td>
                         <td>${pedido.NomeCliente}</td>
-                        <td>${pedido.TotalPedido}</td>
                         <td>${pedido.CodProduto}</td>
                         <td>${pedido.NomeProduto}</td>
-                        <td>${pedido.PrecoProduto}</td>
                         <td>${pedido.QuantidadePedida}</td>
+                        <td>R$ ${pedido.PrecoProduto.toFixed(2)}</td>
+                        <td>R$ ${pedido.TotalPedido.toFixed(2)}</td>
                     `;
                         tbody.appendChild(tr);
                     });
