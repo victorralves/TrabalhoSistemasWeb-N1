@@ -9,10 +9,20 @@ app.use(cors());
 app.use(express.json());
 
 const listaPreco = [
-    { PrecoProduto: 5.5 },
-    { PrecoProduto: 5 },
-    { PrecoProduto: 8 }
+    { CodProduto: 1, PrecoProduto: 5.5 },
+    { CodProduto: 2, PrecoProduto: 5 },
+    { CodProduto: 3, PrecoProduto: 8 },
+    { CodProduto: 4, PrecoProduto: 4 }
 ];
+
+function buscarPreco(codigo) {
+    for (var i = 0; i < listaPreco.length; i++) {
+        if (listaPreco[i].CodProduto == codigo) {
+            return listaPreco[i].PrecoProduto;
+        }
+    }
+    return 0;
+}
 
 const listaPedidos = [
     { NumPedido: 1, NomeCliente: "João", TotalPedido: 10, Itens: [{ CodProduto: 1, Qtd: 1 }, { CodProduto: 2, Qtd: 3 }] },
@@ -23,15 +33,16 @@ app.get('/produtos', async (req, res) => {
     var estoque = await fetch('http://localhost:3003/estoque');
     if (estoque.status === 200) {
         produtosServer3 = await estoque.json();
-        
-        var produtos = listaPreco.map((item, posicao) => {
-            return {
-                CodProduto: produtosServer3[posicao].CodProduto,
-                NomeProduto: produtosServer3[posicao].NomeProduto,
-                PrecoProduto: item.PrecoProduto,
-                Estoque: produtosServer3[posicao].Estoque
-            };
-        })
+
+        var produtos = [];
+        for (var i = 0; i < produtosServer3.length; i++) {
+            produtos.push({
+                CodProduto: produtosServer3[i].CodProduto,
+                NomeProduto: produtosServer3[i].NomeProduto,
+                PrecoProduto: buscarPreco(produtosServer3[i].CodProduto),
+                Estoque: produtosServer3[i].Estoque
+            });
+        }
         res.status(200).json(produtos);
     }
     else {
@@ -44,17 +55,33 @@ app.get('/pedidos', async (req, res) => {
     var estoque = await fetch('http://localhost:3003/estoque');
     if (estoque.status === 200) {
         produtosServer3 = await estoque.json();
-        var listaPedidosAtualizada = listaPedidos.map((pedido, posicao) => {
-            return {
-                NumPedido: pedido.NumPedido,
-                NomeCliente: pedido.NomeCliente,
-                TotalPedido: pedido.TotalPedido,
-                CodProduto: produtosServer3[posicao].CodProduto,
-                NomeProduto: produtosServer3[posicao].NomeProduto,
-                PrecoProduto: listaPreco[posicao].PrecoProduto,
-            };
-        });
-        res.status(200).json(listaPedidosAtualizada);
+
+        var linhas = [];
+        for (var i = 0; i < listaPedidos.length; i++) {
+            var pedido = listaPedidos[i];
+
+            for (var j = 0; j < pedido.Itens.length; j++) {
+                var item = pedido.Itens[j];
+
+                var nome = '';
+                for (var k = 0; k < produtosServer3.length; k++) {
+                    if (produtosServer3[k].CodProduto == item.CodProduto) {
+                        nome = produtosServer3[k].NomeProduto;
+                    }
+                }
+
+                linhas.push({
+                    NumPedido: pedido.NumPedido,
+                    NomeCliente: pedido.NomeCliente,
+                    TotalPedido: pedido.TotalPedido,
+                    CodProduto: item.CodProduto,
+                    NomeProduto: nome,
+                    QuantidadePedida: item.Qtd,
+                    PrecoProduto: buscarPreco(item.CodProduto)
+                });
+            }
+        }
+        res.status(200).json(linhas);
     }
     else {
         let statusCode = estoque.status;
@@ -72,21 +99,6 @@ app.post('/pedidos', async (req, res) => {
     }
     if (pedido.Itens === null) {
         return res.status(400).json({ message: 'Itens invalidos' });
-    }
-    for (let i = 0; i < pedido.Itens.length; i++) {
-        const item = pedido.Itens[i];
-        if (item.CodProduto == null) {
-            return res.status(400).json({ message: 'Codigo do produto nao informado' });
-        }
-        if (Number.isNaN(item.Qtd) || item.Qtd <= 0 || item.Qtd > consultaEstoque[i].Estoque) {
-            return res.status(400).json({ message: 'Qtd invalida' });
-        }
-    }
-    for (let i = 0; i < pedido.Itens.length; i++) {
-        const produtoEncontrado = consultaEstoque.find(produto => produto.CodProduto === pedido.Itens[i].CodProduto);
-        if (!produtoEncontrado) {
-            return res.status(400).json({ message: 'Produto nao encontrado' });
-        }
     }
 
     for (let i = 0; i < pedido.Itens.length; i++) {
@@ -117,20 +129,22 @@ app.post('/pedidos', async (req, res) => {
 
     let totalPedido = 0;
 
+    if (pedido.Itens.length === 0) {
+        return res.status(400).json({ message: 'PEDIDO SEM ITENS CARA, COLOCA ALGO AÍ!' });
+    }
+
     for (let i = 0; i < pedido.Itens.length; i++) {
-        const item = pedido.Itens[i];
+        var item = pedido.Itens[i];
+        totalPedido += item.Qtd * buscarPreco(item.CodProduto);
+    }
 
-        const produtoEncontrado = consultaEstoque.find(
-            produto => produto.CodProduto === Number(item.CodProduto)
-        );
-
-        const posicao = consultaEstoque.findIndex(
-            produto => produto.CodProduto === Number(item.CodProduto)
-        );
-
-        const precoProduto = listaPreco[posicao].PrecoProduto;
-
-        totalPedido += Number(item.Qtd) * precoProduto;
+    const baixa = await fetch('http://localhost:3003/baixa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pedido.Itens)
+    });
+    if (!baixa.ok) {
+        return res.status(400).json({ message: 'Estoque insuficiente' });
     }
 
     listaPedidos.push({
@@ -147,8 +161,16 @@ app.post('/pedidos', async (req, res) => {
     });
 });
 
-app.post('/pedidos/:id/fechar', (req, res) => {
+app.post('/pedidos/:id/fechar', (req, res) => { //CONSERTAR AQUI, NÃO ESTÁ FUNCIONANDO! NAO ESTÁ APAGANDO!
     const pedidoId = req.params.id;
+    const indice = listaPedidos.findIndex(
+        pedido => pedido.NumPedido === pedidoId
+    );
+
+    if (indice !== -1) {
+        listaPedidos.delete(indice - 1);
+    }
+
     const pedidoAtualizado = req.body;
     res.json({ message: 'Pedido fechado com sucesso', pedidoId, pedidoAtualizado });
 });

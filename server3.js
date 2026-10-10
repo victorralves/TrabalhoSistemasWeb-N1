@@ -46,19 +46,20 @@ app.post('/baixa', (req, res) => {
             }
         }
     }
-    res.send('ok');
+    res.status(201).send('Baixa realizada com sucesso em!');
 });
 
 app.post('/reposicao', (req, res) => {
     const itens = req.body;
+    console.log(itens);
     for (let i = 0; i < itens.length; i++) {
         for (let j = 0; j < estoque.length; j++) {
             if (itens[i].CodProduto == estoque[j].CodProduto) {
-                estoque[j].Estoque += itens[i].Qtd;
+                estoque[j].Estoque += itens[i].Estoque;
             }
         }
     }
-    res.send('ok');
+    res.status(201).send('Reposição realizada com sucesso em!');
 });
 
 console.log("http://localhost:3003");
