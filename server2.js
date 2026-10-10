@@ -15,8 +15,8 @@ listaPreco = [
 ];
 
 listaPedidos = [
-    {NumPedido: 1, NomeCliente: "João", TotalPedido: 10, Itens: [{CodProduto: 1, Qtd: 2}, {CodProduto: 2, Qtd: 1}]},
-    {NumPedido: 2, NomeCliente: "Maria", TotalPedido: 5, Itens: [{CodProduto: 2, Qtd: 1}]}
+    {NumPedido: 1, NomeCliente: "João", TotalPedido: 10, Itens: [{CodProduto: 1, Qtd: 1}, {CodProduto: 2, Qtd: 3}]},
+    {NumPedido: 2, NomeCliente: "Maria", TotalPedido: 5, Itens: [{CodProduto: 2, Qtd: 5}]}
 ];
 
 app.get('/produtos', async (req, res) => {
@@ -61,15 +61,43 @@ app.get('/pedidos', async (req, res) => {
     }
 });
 
-app.post('/pedidos', (req, res) => {
+app.post('/pedidos', async (req, res) => {
+    var resposta = await fetch('http://localhost:3003/estoque');
+    consultaEstoque = resposta.json();
     const pedido = req.body;
-    if ( pedido (not) in estoque || pedido.estoque.length === 0) {
-        return res.status(400).json({ message: 'Pedido inválido' });
+    TotalPedido = 0;
+    if(pedido.NomeCliente == null || pedido.NomeCliente === ''){
+        return res.status(400).json({ message: 'Nome invalido' });
     }
-    else{
+    if(pedido.Itens === null){
+        return res.status(400).json({ message: 'Itens invalidos' });
+    }
+    for (let i = 0; i < pedido.Itens.length; i++) {
+        const item = pedido.Itens[i];
+        if (item.CodProduto == null) {
+            return res.status(400).json({message: 'Codigo do produto nao informado'});
+        }
+        if (Number.isNaN(item.Qtd) || item.Qtd <= 0 || item.Qtd > consultaEstoque[i].Estoque) {
+            return res.status(400).json({message: 'Qtd invalida'});
+        }
+    }
+    for (let i = 0; i < estoque.Itens.length; i++) {
+        if(consultaEstoque[i].CodProduto === Itens[i].CodProduto){
+            res.status(200).json(consultaEstoque);
+        }
+        else{
+            return res.status(400).json({message: 'Produto nao encontrado'});
+        }
+    }
 
-        res.status(201).json({ message: 'Pedido criado com sucesso', pedido });
+    for (let i = 0; i < pedido.Itens.length; i++){
+        listaPedidos[i].quantidade = Number(document.getElementById("quantideProduto").value)
+        if(consultaEstoque[i].CodProduto === Itens[i].CodProduto){
+            TotalPedido += PrecoProduto * listaPedidos[i].quantidade;
+        }
     }
+
+    return res.status(201).json('Pedido criado')
 });
 
 app.post('/pedidos/:id/fechar', (req, res) => {

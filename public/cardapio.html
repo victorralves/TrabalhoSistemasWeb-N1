@@ -74,13 +74,19 @@
                         <td>${produto.Estoque}</td>
                         <td>
                             <label for="quantidade_${produto.CodProduto}">Quantidade:</label>
-                            <input type="number" name="quantidade_${produto.CodProduto}" min="0" max="${produto.Estoque}" required>
+                            <input type="number" id="quantidadeProduto" name="quantidade_${produto.CodProduto}" min="0" max="${produto.Estoque}" required>
                         </td>
                     `;
                         tbody.appendChild(tr);
                     });
                 }
 
+                function escaparHTML(texto) {
+                    return String(texto).replace(/[&<>"']/g, c => ({
+                        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                    })[c]);
+                }
+                
                 carregarProdutos();
             </script>
         </tbody>
@@ -96,4 +102,5 @@
     <p id="mensagem"></p>
 
 </body>
+
 </html>
