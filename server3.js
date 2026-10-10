@@ -6,7 +6,8 @@ app.use(express.json());
 const estoque = [
     { CodProduto: 1, NomeProduto: "Sanduíche", Estoque: 10 },
     { CodProduto: 2, NomeProduto: "Refrigerante", Estoque: 15 },
-    { CodProduto: 3, NomeProduto: "Pão de Mel", Estoque: 20 }
+    { CodProduto: 3, NomeProduto: "Pão de Mel", Estoque: 20 },
+    { CodProduto: 4, NomeProduto: "Goiabada", Estoque: 17 }
 ];
 
 app.get('/estoque', (req, res) => {

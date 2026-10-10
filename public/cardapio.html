@@ -86,7 +86,7 @@
                         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
                     })[c]);
                 }
-                
+
                 carregarProdutos();
             </script>
         </tbody>
@@ -94,7 +94,50 @@
 
     <div style="text-align: center">
         <br></br>
-        <button type="submit">Enviar Pedido</button>
+        <button onclick="EnviarPedidos()" type="button">Enviar Pedido</button>
+        <script>
+            const EnviarPedidos = () => {
+                const nomeClientePassado = document.getElementById("nomeCliente").value;
+
+                const pedido = {
+                    NomeCliente: nomeClientePassado,
+                    Itens: []
+                };
+
+                const tbody = document.getElementById("tbody");
+                const linhas = tbody.querySelectorAll("tr");
+
+                linhas.forEach(linha => {
+                    const celulas = linha.querySelectorAll("td");
+
+                    const codigo = Number(celulas[0].textContent);
+                    const quantidade = Number(celulas[4].querySelector("input").value);
+
+                    if (quantidade > 0) {
+                        pedido.Itens.push({
+                            CodProduto: codigo,
+                            Qtd: quantidade
+                        });
+                    }
+                });
+
+                fetch("http://localhost:3002/pedidos", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(pedido)
+                })
+                    .then(response => response.json())
+                    .then(resultado => {
+                        console.log(resultado);
+                        alert(resultado.message || "Pedido enviado!");
+                    })
+                    .catch(error => {
+                        console.error("Erro ao enviar pedido:", error);
+                    });
+            };
+        </script>
         <br></br>
         <a href="/" style="margin: 0 auto; align-items: center">Voltar para o inicio</a>
     </div>
