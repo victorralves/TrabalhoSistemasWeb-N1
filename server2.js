@@ -39,8 +39,26 @@ app.get('/produtos', async (req, res) => {
     }
 });
 
-app.get('/pedidos', (req, res) => {
-    res.json({ message: 'Lista de pedidos' });
+app.get('/pedidos', async (req, res) => {
+    var estoque = await fetch('http://localhost:3003/estoque');
+    if(estoque.status === 200){
+        produtosServer3 = await estoque.json();
+        var listaPedidosAtualizada = listaPedidos.map((pedido, posicao) => {
+            return {
+                NumPedido: pedido.NumPedido,
+                NomeCliente: pedido.NomeCliente,
+                TotalPedido: pedido.TotalPedido,
+                CodProduto: produtosServer3[posicao].CodProduto,
+                NomeProduto: produtosServer3[posicao].NomeProduto,
+                PrecoProduto: listaPreco[posicao].PrecoProduto,
+            };
+        });
+        res.status(200).json(listaPedidosAtualizada);
+    }
+    else{
+        let statusCode = estoque.status;
+        console.error(`Erro ao obter o estoque. Status code: ${statusCode}`);
+    }
 });
 
 app.post('/pedidos', (req, res) => {

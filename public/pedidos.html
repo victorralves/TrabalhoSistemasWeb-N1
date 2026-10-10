@@ -1,20 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos</title>
-    <link rel="stylesheet" href="style.css">
 </head>
+
 <body style="text-align: center">
     <h1>Pedidos</h1>
 
+    <table style="margin: 0 auto; text-align: center;">
+        <thead>
+            <tr>
+                <th>Código do Pedido |</th>
+                <th>Nome do Cliente |</th>
+                <th>Total do Pedido |</th>
+                <th>Código do Produto |</th>
+                <th>Nome do Produto |</th>
+                <th>Preço do Produto |</th>
+                <th><strong>Quantidade Pedida</strong></th><br>
+            </tr>
+        </thead>
+
+        <tbody id="tbodyPedidos">
+            <script>
+                var pedidosAtualizados = {
+                    listaPedidos: [],
+
+                    getPedidos: function () {
+                        var pedidos = localStorage.getItem('pedidos');
+                        this.listaPedidos = pedidos ? JSON.parse(pedidos) : [];
+                        return this.listaPedidos;
+                    },
+                    setPedidos: function (pedidos) {
+                        localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                    }
+                }
+
+                function carregarPedidos() {
+                    var linkPedidos = 'http://localhost:3002/pedidos';
+
+                    fetch(linkPedidos)
+                        .then(response => {
+                            if (response.ok) return response.json();
+                            throw new Error(`Falha na resposta do servidor (${response.status})`);
+                        })
+                        .then(pedidos => {
+                            pedidosAtualizados.setPedidos(pedidos);
+                            if (pedidos == null || pedidos.length === 0) {
+                                console.log('Nenhum pedido encontrado.');
+                            }
+                            exibirPedidos();
+                        })
+                        .catch(error =>
+                            console.error('Erro ao carregar pedidos:', error));
+                }
+
+                function exibirPedidos() {
+                    var tbody = document.getElementById('tbodyPedidos');
+                    tbody.innerHTML = '';
+
+                    var pedidos = pedidosAtualizados.getPedidos();
+
+                    pedidos.forEach(pedido => {
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = `
+                        <td>${pedido.NumPedido}</td>
+                        <td>${pedido.NomeCliente}</td>
+                        <td>${pedido.TotalPedido}</td>
+                        <td>${pedido.CodProduto}</td>
+                        <td>${pedido.NomeProduto}</td>
+                        <td>${pedido.PrecoProduto}</td>
+                        <td>${pedido.QuantidadePedida}</td>
+                    `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                carregarPedidos();
+            </script>
+        </tbody>
+    </table>
+
+    <br>
     <button id="atualizar">Atualizar</button>
+    <script>
+        document.getElementById('atualizar').addEventListener('click', function () {
+            carregarPedidos();
+        });
+    </script>
 
-    <div id="pedidos">
-        <!-- vai puxar do server 2 depois -->
-    </div>
-
+    <br>
     <a href="/">Voltar para o inicio</a>
 </body>
+
 </html>
