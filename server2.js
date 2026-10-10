@@ -106,9 +106,7 @@ app.post('/pedidos', async (req, res) => {
         const quantidade = Number(item.Qtd);
 
         if (!Number.isInteger(quantidade) || quantidade <= 0) {
-            return res.status(400).json({
-                message: 'Quantidade inválida'
-            });
+            return res.status(400).json({message: 'Quantidade inválida'});
         }
 
         const produtoEstoque = consultaEstoque.find(
@@ -116,14 +114,10 @@ app.post('/pedidos', async (req, res) => {
         );
 
         if (!produtoEstoque) {
-            return res.status(400).json({
-                message: 'Produto não encontrado'
-            });
+            return res.status(400).json({message: 'Produto não encontrado'});
         }
         if (quantidade > produtoEstoque.Estoque) {
-            return res.status(400).json({
-                message: 'Quantidade maior que o estoque disponível'
-            });
+            return res.status(400).json({message: 'Quantidade maior que o estoque disponível'});
         }
     }
 
@@ -156,23 +150,22 @@ app.post('/pedidos', async (req, res) => {
 
     console.log(listaPedidos);
 
-    return res.status(201).json({
-        message: 'Pedido criado'
-    });
+    return res.status(201).json({message: 'Pedido criado'});
 });
 
-app.post('/pedidos/:id/fechar', (req, res) => { //CONSERTAR AQUI, NÃO ESTÁ FUNCIONANDO! NAO ESTÁ APAGANDO!
-    const pedidoId = req.params.id;
+app.delete('/pedidos/:id/fechar', (req, res) => {
+    const pedidoId = Number(req.params.id);
     const indice = listaPedidos.findIndex(
         pedido => pedido.NumPedido === pedidoId
     );
 
     if (indice !== -1) {
-        listaPedidos.delete(indice - 1);
+        listaPedidos.splice(indice, 1);
+        const pedidoAtualizado = req.body;
+        return res.json({ message: 'Pedido fechado com sucesso', pedidoId, pedidoAtualizado });
     }
 
-    const pedidoAtualizado = req.body;
-    res.json({ message: 'Pedido fechado com sucesso', pedidoId, pedidoAtualizado });
+    return res.status(404).json({message: 'Pedido não encontrado'});
 });
 
 
