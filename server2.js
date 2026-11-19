@@ -124,7 +124,7 @@ app.post('/pedidos', async (req, res) => {
     let totalPedido = 0;
 
     if (pedido.Itens.length === 0) {
-        return res.status(400).json({ message: 'PEDIDO SEM ITENS CARA, COLOCA ALGO AÍ!' });
+        return res.status(400).json({ message: 'Pedido sem itens! Informe os itens do pedido.' });
     }
 
     for (let i = 0; i < pedido.Itens.length; i++) {
