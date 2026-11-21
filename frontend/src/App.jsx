@@ -1,10 +1,15 @@
-import { useState } from 'react'
-import Cardapio from './pages/cardapio'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Cardapio from './pages/cardapio';
 
 function App() {
     return (
-        <Cardapio />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Cardapio />} />
+                <Route path="/cardapio" element={<Cardapio />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
-export default App
+export default App;

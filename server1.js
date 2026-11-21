@@ -1,21 +1,14 @@
 //SERVIDOR PÁGINAS ESTÁTICAS!!
-
 const express = require('express');
+const path = require('path');
+
 const app = express();
 
-app.use(express.json());
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/frontend/public/index.html');
+app.get('/{*splat}', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
 
-app.get('/cardapio', (req, res) => {
-    res.sendFile(__dirname + '/frontend/public/cardapio.html');
-});
-
-app.get('/pedidos', (req, res) => {
-    res.sendFile(__dirname + '/frontend/public/pedidos.html');
-});
-
-console.log("http://localhost:3001");
+console.log('http://localhost:3001');
 app.listen(3001);
