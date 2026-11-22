@@ -1,15 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Cardapio from './pages/cardapio';
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/home.jsx'
+import Pedidos from './pages/pedidos.jsx'
+import Cardapio from './pages/cardapio.jsx'
 
-function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Cardapio />} />
-                <Route path="/cardapio" element={<Cardapio />} />
-            </Routes>
-        </BrowserRouter>
-    );
+export function App() {
+  return(
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/pedidos" element={<Pedidos />} />
+      <Route path="/cardapio" element={<Cardapio />} />
+    </Routes>
+  )
 }
-
-export default App;
