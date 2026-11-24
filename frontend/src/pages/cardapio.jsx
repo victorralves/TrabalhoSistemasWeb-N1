@@ -11,7 +11,6 @@ function Cardapio() {
         carregarProdutos();
     }, []);
 
-
     async function carregarProdutos() {
         try{
             const dados = await buscarProdutos();
