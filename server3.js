@@ -14,7 +14,13 @@ app.get('/estoque', (req, res) => {
     res.json(estoque);
 });
 
-app.post('/baixa', (req, res) => {
+app.post('/baixa', 
+    
+    (body('Itens').isArray({ min: 1 }).withMessage('O pedido deve conter pelo menos um item'),
+    body('Itens.*.CodProduto').isInt({ gt: 0 }).withMessage('Código do produto inválido'),
+    body('Itens.*.Qtd').isInt({ gt: 0 }).withMessage('Quantidade inválida')),
+    
+    (req, res) => {
     const itens = req.body;
     let temEstoque = true;
 
@@ -49,7 +55,13 @@ app.post('/baixa', (req, res) => {
     res.status(201).send('Baixa realizada com sucesso em!');
 });
 
-app.post('/reposicao', (req, res) => {
+app.post('/reposicao', 
+    
+    (body('Itens').isArray({ min: 1 }).withMessage('O pedido deve conter pelo menos um item'),
+    body('Itens.*.CodProduto').isInt({ gt: 0 }).withMessage('Código do produto inválido'),
+    body('Itens.*.Qtd').isInt({ gt: 0 }).withMessage('Quantidade inválida')),
+
+    (req, res) => {
     const itens = req.body;
     console.log(itens);
     for (let i = 0; i < itens.length; i++) {

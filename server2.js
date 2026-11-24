@@ -8,6 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const { body, expressValidator } = require('express-validator');
+
 const listaPreco = [
     { CodProduto: 1, PrecoProduto: 5.5 },
     { CodProduto: 2, PrecoProduto: 5 },
@@ -89,7 +91,15 @@ app.get('/pedidos', async (req, res) => {
     }
 });
 
-app.post('/pedidos', async (req, res) => {
+app.post('/pedidos', 
+
+    (body('NomeCliente').notEmpty().withMessage('Nome do cliente é obrigatório'),
+    body('NomeCliente').trim().isLength({ min: 5 }).withMessage('Nome do cliente deve ter entre 5 e 100 caracteres'),
+    body('Itens').isArray({ min: 1 }).withMessage('O pedido deve conter pelo menos um item'),
+    body('Itens.*.CodProduto').isInt({ gt: 0 }).withMessage('Código do produto inválido'),
+    body('Itens.*.Qtd').isInt({ gt: 0 }).withMessage('Quantidade do item inválida')),
+
+    async (req, res) => {
     const resposta = await fetch('http://localhost:3003/estoque');
     const consultaEstoque = await resposta.json();
 
@@ -153,7 +163,12 @@ app.post('/pedidos', async (req, res) => {
     return res.status(201).json({message: 'Pedido criado'});
 });
 
-app.delete('/pedidos/:id/fechar', (req, res) => {
+app.delete('/pedidos/:id/fechar', 
+
+    body('Itens').isArray({ min: 1 }).withMessage('O pedido deve conter pelo menos um item'),
+    body('Itens.*.CodProduto').isInt({ gt: 0 }).withMessage('Código do produto inválido'),
+    
+    (req, res) => {
     const pedidoId = Number(req.params.id);
     const indice = listaPedidos.findIndex(
         pedido => pedido.NumPedido === pedidoId
