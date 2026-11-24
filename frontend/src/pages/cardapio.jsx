@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Produto from '../components/Produto';
+import buscarProdutos from '../services/produtosService';
 
 function Cardapio() {
     const [produtos, setProdutos] = useState([]);
@@ -7,21 +8,18 @@ function Cardapio() {
     const [nomeCliente, setNomeCliente] = useState('');
 
     useEffect(() => {
-        buscarProdutos();
+        carregarProdutos();
     }, []);
 
-    async function buscarProdutos() {
-        try {
-            const resposta = await fetch('http://localhost:3002/produtos');
 
-            if (!resposta.ok) {
-                throw new Error('Erro ao buscar produtos');
-            }
-
-            const dados = await resposta.json();
+    async function carregarProdutos() {
+        try{
+            const dados = await buscarProdutos();
             setProdutos(dados);
-        } catch (erro) {
+        }
+        catch (erro) {
             console.error(erro);
+            alert('Erro ao carregar produtos.');
         }
     }
 

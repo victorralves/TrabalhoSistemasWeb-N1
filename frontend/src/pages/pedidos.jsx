@@ -15,19 +15,15 @@ function Pedidos() {
             const dados = await buscarPedidos();
             setPedidos(dados);
         } catch (error) {
-            console.error('Erro ao carregar pedidos:', error);
+            alert('Erro ao carregar pedidos');
         }
-    }
-
-    async function atualizarPedidos() {
-        await carregarPedidos();
     }
 
     return (
         <main>
             <h1 style={{ textAlign: 'center' }}>Pedidos</h1>
 
-            <button onClick={atualizarPedidos}>
+            <button onClick={carregarPedidos}>
                 Atualizar Pedidos
             </button>
 
