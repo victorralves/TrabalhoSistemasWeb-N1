@@ -1,11 +1,12 @@
-function Pedido({codigo, nome, quantidade, preco}) {
+function Pedido({codigo, nomeCliente, quantidade, total, nomeProduto}) {
     return (
         <div>
             <h2>Pedido</h2>
             <p>Código: {codigo}</p>
-            <p>Nome do Cliente: {nome}</p>
+            <p>Nome do Cliente: {nomeCliente}</p>
+            <p>Produto: {nomeProduto}</p>
             <p>Quantidade: {quantidade}</p>
-            <p>Preço: {preco}</p>
+            <p>Total: {total}</p>
         </div>
     );
 }
